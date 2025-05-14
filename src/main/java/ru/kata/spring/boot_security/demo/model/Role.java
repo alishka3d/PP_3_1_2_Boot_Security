@@ -21,16 +21,17 @@ public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
-    @Column
+    @Column(name = "authority")
     String authority;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(/*fetch = FetchType.LAZY*/)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> users = new HashSet<>();
+    private Set<User> users;
 
     @Override
     public String getAuthority() {
