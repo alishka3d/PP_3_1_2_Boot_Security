@@ -34,6 +34,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.getById(id);
     }
 
+    public User getUserByName(String name) {
+        return userRepository.getUserByName(name).orElseThrow();
+    }
+
     @Override
     public void saveUser(User user) {
         userRepository.save(user);
@@ -56,8 +60,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.getUserByName(username);
-        System.out.println("user = " + user);
-        System.out.println("userRepository.getById(1) = " + userRepository.getById(1));
         if (user.isPresent()) {
             return new UserDetailsImpl(user.get());
         } else {

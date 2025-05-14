@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Welcome</title>
+</head>
+<body>
+<h1 th:text="'Hello, ' + ${username} + '.'"></h1>
+
+<form th:action="@{user/info(username=${username})}" method="get">
+  <button type="submit">My Page</button>
+</form>
+</body>
+</html>

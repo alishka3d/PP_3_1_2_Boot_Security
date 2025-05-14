@@ -28,7 +28,7 @@ public class User{
     private String email;
     @Column(name = "password")
     private String password;
-    @ManyToMany(mappedBy = "users"/*, fetch = FetchType.LAZY*/)
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Role> roles;
 
 
