@@ -17,7 +17,7 @@
 <h1>User List</h1>
 
 <div class="add-button">
-    <form th:action="@{/users/add}" method="get">
+    <form th:action="@{/add}" method="get">
         <button type="submit">Add User</button>
     </form>
 </div>
@@ -40,11 +40,11 @@
         <td th:text="${user.email}"></td>
         <td>
             <div class="action-buttons">
-                <form th:action="@{/users/edit}" method="get" style="display:inline;">
+                <form th:action="@{/edit}" method="get" style="display:inline;">
                     <input type="hidden" name="id" th:value="${user.id}" />
                     <button type="submit">Edit</button>
                 </form>
-                <form th:action="@{/users/delete}" method="post" style="display:inline;">
+                <form th:action="@{/delete}" method="post" style="display:inline;">
                     <input type="hidden" name="id" th:value="${user.id}" />
                     <button type="submit">Delete</button>
                 </form>

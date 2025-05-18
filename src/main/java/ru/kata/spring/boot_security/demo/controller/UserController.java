@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping
 public class UserController {
 
     private final UserService userService;
@@ -33,7 +33,7 @@ public class UserController {
         return "user";
     }
 
-    @GetMapping
+    @GetMapping("/admin")
     public String allUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         return "users/users";
@@ -49,7 +49,7 @@ public class UserController {
     @PostMapping("/create")
     public String addUser(@ModelAttribute("user") User user) {
         userService.saveUser(user);
-        return "redirect:/users";
+        return "redirect:/admin";
     }
 
     @GetMapping("/edit")
@@ -61,12 +61,12 @@ public class UserController {
     @PostMapping("/update")
     public String updateUser(@ModelAttribute("user") User user, @RequestParam int id) {
         userService.updateUser(id, user);
-        return "redirect:/users";
+        return "redirect:/admin";
     }
 
     @PostMapping("/delete")
     public String deleteUser(@RequestParam int id) {
         userService.deleteUser(id);
-        return "redirect:/users";
+        return "redirect:/admin";
     }
 }

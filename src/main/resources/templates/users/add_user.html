@@ -24,7 +24,7 @@
 <body>
 <h1>Add User</h1>
 
-<form th:action="@{/users/create}" method="post">
+<form th:action="@{/create}" method="post">
     <div class="form-group">
         <label for="name">Name:</label>
         <input type="text" id="name" th:name="name" required/>
@@ -41,7 +41,7 @@
     </div>
 
     <button type="submit">Add User</button>
-    <a href="/users" style="margin-left: 10px;">Cancel</a>
+    <a href="/admin" style="margin-left: 10px;">Cancel</a>
 </form>
 </body>
 </html>
