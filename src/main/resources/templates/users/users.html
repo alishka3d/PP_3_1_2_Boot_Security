@@ -8,8 +8,12 @@
             display: inline-block;
             margin-right: 5px; /* Отступ между кнопками */
         }
+
         .add-button {
             margin-bottom: 10px; /* Отступ снизу для кнопки "Add" */
+        }
+        .logout-button {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -29,7 +33,7 @@
         <th>Name</th>
         <th>Last Name</th>
         <th>Email</th>
-        <th>Actions</th>
+        <th>Password</th>
     </tr>
     </thead>
     <tbody>
@@ -39,15 +43,14 @@
         <td th:text="${user.lastName}"></td>
         <td th:text="${user.email}"></td>
         <td th:text="${user.password}"></td>
-        <td th:text="${user.roles}"></td>
         <td>
             <div class="action-buttons">
                 <form th:action="@{/edit}" method="get" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${user.id}" />
+                    <input type="hidden" name="id" th:value="${user.id}"/>
                     <button type="submit">Edit</button>
                 </form>
                 <form th:action="@{/delete}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${user.id}" />
+                    <input type="hidden" name="id" th:value="${user.id}"/>
                     <button type="submit">Delete</button>
                 </form>
             </div>
@@ -55,5 +58,10 @@
     </tr>
     </tbody>
 </table>
+<div class="logout-button">
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</div>
 </body>
 </html>

@@ -27,7 +27,7 @@ public class UserController {
         return "welcome";
     }
 
-    @GetMapping("/user/info")
+    @GetMapping("/user")
     public String userInfo(@AuthenticationPrincipal UserDetailsImpl user, Model model) {
         model.addAttribute("user", userService.getUserByName(user.getUsername()));
         return "user";

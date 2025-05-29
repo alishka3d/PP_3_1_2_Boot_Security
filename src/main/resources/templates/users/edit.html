@@ -19,6 +19,9 @@
         button {
             padding: 10px 15px;
         }
+        .logout-button {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -50,5 +53,10 @@
     <button type="submit">Update User</button>
     <a href="/admin" style="margin-left: 10px;">Cancel</a>
 </form>
+<div class="logout-button">
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</div>
 </body>
 </html>

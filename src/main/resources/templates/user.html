@@ -2,6 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>User Info</title>
+    <style>
+        .logout-button {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 <div>
@@ -15,6 +20,11 @@
     <p>
         <strong>Email:</strong> <span th:text="${user.email}"></span>
     </p>
+</div>
+<div class="logout-button">
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
 </div>
 </body>
 </html>
