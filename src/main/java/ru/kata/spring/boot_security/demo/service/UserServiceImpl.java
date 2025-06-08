@@ -3,25 +3,28 @@ package ru.kata.spring.boot_security.demo.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.security.UserDetailsImpl;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     UserRepository userRepository;
+    RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -40,7 +43,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void saveUser(User user) {
-        userRepository.save(user);
+        try {
+            Role userRole = roleRepository.findByAuthority("ROLE_USER")
+                    .orElseThrow();
+            user.setRoles(new HashSet<>());
+            user.getRoles().add(userRole);
+            userRole.getUsers().add(user);
+            userRepository.save(user);
+        } catch (Exception e) {
+            System.err.println("Error saving user: " + e.getMessage());
+        }
     }
 
     @Override
@@ -55,7 +67,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void deleteUser(int id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow();
+        for (Role role : user.getRoles()) {
+            role.getUsers().remove(user);
+        }
+        user.getRoles().clear();
+        userRepository.delete(user);
     }
 
     @Override

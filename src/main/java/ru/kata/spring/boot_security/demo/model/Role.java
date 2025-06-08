@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -25,7 +24,7 @@ public class Role implements GrantedAuthority {
     private Integer id;
     @Column(name = "authority")
     String authority;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -37,4 +36,5 @@ public class Role implements GrantedAuthority {
     public String getAuthority() {
         return authority;
     }
+
 }

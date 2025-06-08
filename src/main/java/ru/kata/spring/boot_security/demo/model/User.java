@@ -13,7 +13,6 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
 public class User{
 
     @Id
@@ -28,8 +27,6 @@ public class User{
     private String email;
     @Column(name = "password")
     private String password;
-    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Role> roles;
-
-
 }
