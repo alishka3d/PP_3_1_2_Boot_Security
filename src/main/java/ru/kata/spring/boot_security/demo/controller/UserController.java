@@ -1,8 +1,10 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.security.UserDetailsImpl;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,15 +12,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping
 public class UserController {
 
     private final UserService userService;
+    private final RoleService roleService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     @GetMapping("/welcome")
@@ -41,13 +49,32 @@ public class UserController {
 
     @GetMapping("/add")
     public String addUser(Model model) {
+        model.addAttribute("allRoles", roleService.getAllRoles());
         model.addAttribute("user", new User());
         return "users/add_user";
     }
 
 
     @PostMapping("/create")
-    public String addUser(@ModelAttribute("user") User user) {
+    public String addUser(@RequestParam String name,
+                          @RequestParam String lastName,
+                          @RequestParam String email,
+                          @RequestParam String password,
+                          @RequestParam(required = false) List<Integer> roleIds) {
+
+        User user = new User();
+        user.setName(name);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setPassword(password);
+
+        if (roleIds != null) {
+            Set<Role> roles = roleIds.stream()
+                    .map(roleService::findById)
+                    .collect(Collectors.toSet());
+            user.setRoles(roles);
+        }
+
         userService.saveUser(user);
         return "redirect:/admin";
     }

@@ -12,6 +12,16 @@
         .add-button {
             margin-bottom: 10px; /* Отступ снизу для кнопки "Add" */
         }
+        .roles-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .role-badge {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
         .logout-button {
             margin-top: 10px;
         }
@@ -34,6 +44,8 @@
         <th>Last Name</th>
         <th>Email</th>
         <th>Password</th>
+        <th>Roles</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -43,6 +55,15 @@
         <td th:text="${user.lastName}"></td>
         <td th:text="${user.email}"></td>
         <td th:text="${user.password}"></td>
+        <td>
+            <div class="roles-list">
+                <span th:each="role : ${user.roles}"
+                      class="role-badge"
+                      th:text="${role.authority}">
+                </span>
+                <span th:if="${user.roles.isEmpty()}">No roles</span>
+            </div>
+        </td>
         <td>
             <div class="action-buttons">
                 <form th:action="@{/edit}" method="get" style="display:inline;">

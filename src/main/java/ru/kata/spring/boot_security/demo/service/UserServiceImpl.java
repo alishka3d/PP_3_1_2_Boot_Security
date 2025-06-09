@@ -44,11 +44,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void saveUser(User user) {
         try {
-            Role userRole = roleRepository.findByAuthority("ROLE_USER")
-                    .orElseThrow();
-            user.setRoles(new HashSet<>());
-            user.getRoles().add(userRole);
-            userRole.getUsers().add(user);
+            user.getRoles().forEach(role -> role.getUsers().add(user));
             userRepository.save(user);
         } catch (Exception e) {
             System.err.println("Error saving user: " + e.getMessage());
