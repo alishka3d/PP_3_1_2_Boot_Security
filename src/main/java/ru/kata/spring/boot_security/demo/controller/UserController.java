@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,11 +82,32 @@ public class UserController {
     @GetMapping("/edit")
     public String editUser(@RequestParam int id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
+        model.addAttribute("allRoles", roleService.getAllRoles());
         return "users/edit";
     }
 
     @PostMapping("/update")
-    public String updateUser(@ModelAttribute("user") User user, @RequestParam int id) {
+    public String updateUser(
+            @RequestParam int id,
+            @RequestParam String name,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam(required = false) List<Integer> roleIds) {
+
+        User user = new User();
+        user.setName(name);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setPassword(password);
+        if (roleIds != null) {
+            Set<Role> roles = roleIds.stream()
+                    .map(roleService::findById)
+                    .collect(Collectors.toSet());
+            user.setRoles(roles);
+        } else {
+            user.setRoles(new HashSet<>());
+        }
         userService.updateUser(id, user);
         return "redirect:/admin";
     }

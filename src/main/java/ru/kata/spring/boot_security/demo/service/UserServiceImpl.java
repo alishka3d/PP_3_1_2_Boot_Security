@@ -12,6 +12,7 @@ import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.security.UserDetailsImpl;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 @Service
@@ -52,12 +53,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void updateUser(int id, User user) {
-        User userFromDB = userRepository.getById(id);
-        userFromDB.setName(user.getName());
-        userFromDB.setLastName(user.getLastName());
-        userFromDB.setEmail(user.getEmail());
-        userFromDB.setPassword(user.getPassword());
+    public void updateUser(int id, User updatedUser) {
+        User userFromDB = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+
+        userFromDB.setName(updatedUser.getName());
+        userFromDB.setLastName(updatedUser.getLastName());
+        userFromDB.setEmail(updatedUser.getEmail());
+        userFromDB.setPassword(updatedUser.getPassword());
+
+        userFromDB.getRoles().forEach(role -> role.getUsers().remove(userFromDB));
+        userFromDB.getRoles().clear();
+
+        if (updatedUser.getRoles() != null) {
+            updatedUser.getRoles().forEach(role -> {
+                role.getUsers().add(userFromDB);
+                userFromDB.getRoles().add(role);
+            });
+        }
+
         userRepository.save(userFromDB);
     }
 

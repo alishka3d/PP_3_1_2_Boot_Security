@@ -22,6 +22,12 @@
         .logout-button {
             margin-top: 10px;
         }
+        .roles-container {
+            margin-top: 10px;
+        }
+        .role-option {
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -48,6 +54,20 @@
     <div class="form-group">
         <label for="password">Password:</label>
         <input type="text" id="password" th:name="password" th:value="${user.password}" required/>
+    </div>
+
+    <div class="form-group">
+        <label>Roles:</label>
+        <div class="roles-container">
+            <div th:each="role : ${allRoles}" class="role-option">
+                <input type="checkbox"
+                       th:id="${'role_' + role.id}"
+                       th:value="${role.id}"
+                       name="roleIds"
+                       th:checked="${#lists.contains(user.roles, role)}"/>
+                <label th:for="${'role_' + role.id}" th:text="${role.authority}"></label>
+            </div>
+        </div>
     </div>
 
     <button type="submit">Update User</button>
