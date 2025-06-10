@@ -6,5 +6,10 @@ import java.util.List;
 
 public interface RoleService {
     List<Role> getAllRoles();
+
+    void saveRole(Role role);
+
+    Role getRoleByAuthority(String authority);
+
     Role findById(Integer id);
 }

@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.security.UserDetailsImpl;
 import ru.kata.spring.boot_security.demo.service.RoleService;
@@ -11,10 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping
@@ -56,26 +52,9 @@ public class UserController {
 
 
     @PostMapping("/create")
-    public String addUser(@RequestParam String name,
-                          @RequestParam String lastName,
-                          @RequestParam String email,
-                          @RequestParam String password,
+    public String addUser(@ModelAttribute("user") User user,
                           @RequestParam(required = false) List<Integer> roleIds) {
-
-        User user = new User();
-        user.setName(name);
-        user.setLastName(lastName);
-        user.setEmail(email);
-        user.setPassword(password);
-
-        if (roleIds != null) {
-            Set<Role> roles = roleIds.stream()
-                    .map(roleService::findById)
-                    .collect(Collectors.toSet());
-            user.setRoles(roles);
-        }
-
-        userService.saveUser(user);
+        userService.saveUser(user, roleIds);
         return "redirect:/admin";
     }
 
@@ -88,27 +67,9 @@ public class UserController {
 
     @PostMapping("/update")
     public String updateUser(
-            @RequestParam int id,
-            @RequestParam String name,
-            @RequestParam String lastName,
-            @RequestParam String email,
-            @RequestParam String password,
+            @ModelAttribute("user") User user,
             @RequestParam(required = false) List<Integer> roleIds) {
-
-        User user = new User();
-        user.setName(name);
-        user.setLastName(lastName);
-        user.setEmail(email);
-        user.setPassword(password);
-        if (roleIds != null) {
-            Set<Role> roles = roleIds.stream()
-                    .map(roleService::findById)
-                    .collect(Collectors.toSet());
-            user.setRoles(roles);
-        } else {
-            user.setRoles(new HashSet<>());
-        }
-        userService.updateUser(id, user);
+        userService.updateUser(user.getId(), user, roleIds);
         return "redirect:/admin";
     }
 
