@@ -82,7 +82,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userFromDB.setName(updatedUser.getName());
         userFromDB.setLastName(updatedUser.getLastName());
         userFromDB.setEmail(updatedUser.getEmail());
-        userFromDB.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        if (!Objects.equals(userFromDB.getPassword(), updatedUser.getPassword())) {
+            userFromDB.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
 
         userFromDB.getRoles().forEach(role -> role.getUsers().remove(userFromDB));
         userFromDB.getRoles().clear();
