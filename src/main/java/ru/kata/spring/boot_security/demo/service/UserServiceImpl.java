@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
@@ -35,33 +37,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
-        if (userRepository.getUserByName("admin").isEmpty()) {
-            Role adminRole = roleService.getRoleByAuthority("ROLE_ADMIN");
-            Role userRole = roleService.getRoleByAuthority("ROLE_USER");
-            if (adminRole == null) {
-                adminRole = new Role();
-                adminRole.setAuthority("ROLE_ADMIN");
-                roleService.saveRole(adminRole);
-            }
-            if (userRole == null) {
-                System.err.println("role_user");
-                userRole = new Role();
-                userRole.setAuthority("ROLE_USER");
-                roleService.saveRole(userRole);
-            }
-            // Создаём пользователя
-            User admin = new User();
-            admin.setName("admin");
-            admin.setLastName("admin");
-            admin.setEmail("admin@admin.com");
-            admin.setPassword("111"); // Шифруем пароль
-            Set<Role> roles = new HashSet<>();
-            roles.add(adminRole);
-            roles.add(userRole);
-            admin.setRoles(roles);
-            saveUser(admin, new ArrayList<>());
-            System.err.println("Создан администратор: admin / 111");
-        }
+        User userAdmin = userRepository.getUserByName("admin")
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + "admin"));
+        userAdmin.setPassword(passwordEncoder.encode("${admin.default.password}"));
+        userRepository.save(userAdmin);
+        log.info("Создан администратор: admin / 111");
     }
 
     @Override
@@ -85,8 +65,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             setRolesById(user, roleIds);
             user.getRoles().forEach(role -> role.getUsers().add(user));
             userRepository.save(user);
+            log.info("User saved. Name: {}", user.getName());
         } catch (Exception e) {
-            System.err.println("Error saving user: " + e.getMessage());
+            log.error("Error saving user: {}", e.getMessage());
         }
     }
 
@@ -114,6 +95,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         userRepository.save(userFromDB);
+        log.info("User updated. Name: {}", userFromDB.getName());
     }
 
     @Override
