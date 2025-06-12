@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void init() {
         User userAdmin = userRepository.getUserByName("admin")
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + "admin"));
-        userAdmin.setPassword(passwordEncoder.encode("${admin.default.password}"));
+        userAdmin.setPassword(passwordEncoder.encode("111"));
         userRepository.save(userAdmin);
         log.info("Создан администратор: admin / 111");
     }
